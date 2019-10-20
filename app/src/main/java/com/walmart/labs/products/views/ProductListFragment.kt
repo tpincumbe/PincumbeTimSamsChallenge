@@ -22,10 +22,6 @@ import timber.log.Timber
 
 class ProductListFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = ProductListFragment()
-    }
-
     private lateinit var binding: FragmentProductListBinding
 
     private val viewModel: ProductListViewModel by lazy {
@@ -47,6 +43,7 @@ class ProductListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        activity?.title = "Walmart"
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         binding.recyclerProductList.apply {
@@ -69,11 +66,6 @@ class ProductListFragment : Fragment() {
 
     private fun onProductTapped(product: Product, position: Int) {
         Timber.d("Tapped on ${product.productId}: ${product.productName}")
-        Toast.makeText(
-            context,
-            "Tapped on ${product.productId}: ${product.productName}",
-            Toast.LENGTH_SHORT
-        ).show()
         findNavController().navigate(
             ProductListFragmentDirections
                 .actionProductListFragmentToProductDetailPagerFragment(
