@@ -2,11 +2,10 @@ package com.walmart.labs.products.views
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import androidx.fragment.app.Fragment
 import com.walmart.labs.R
 import com.walmart.labs.products.util.ProductDetailPagerAdapter
 import kotlinx.android.synthetic.main.fragment_product_detail_pager.*

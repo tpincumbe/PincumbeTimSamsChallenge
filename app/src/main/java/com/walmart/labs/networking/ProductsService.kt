@@ -10,7 +10,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import timber.log.Timber
-import java.lang.Exception
 
 const val BASE_URL = "https://mobile-tha-server.firebaseapp.com/"
 const val DEFAULT_PAGE_SIZE = "30"
@@ -45,7 +44,7 @@ interface ProductsApiService {
 object ProductsApi {
     val retrofitService: ProductsApiService by lazy { retrofit.create(ProductsApiService::class.java) }
 
-    suspend fun fetchProducts(productPage: Int) : ProductsResponse {
+    suspend fun fetchProducts(productPage: Int): ProductsResponse {
         val deferredProducts = retrofitService.getProductsAsync(productPage)
         try {
             val productsResponse = deferredProducts.await()

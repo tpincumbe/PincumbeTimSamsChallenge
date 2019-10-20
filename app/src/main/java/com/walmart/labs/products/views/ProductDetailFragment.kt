@@ -1,18 +1,13 @@
 package com.walmart.labs.products.views
 
-import android.app.Activity
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.walmart.labs.MainActivity
-
 import com.walmart.labs.R
 import com.walmart.labs.databinding.FragmentProductDetailBinding
 import com.walmart.labs.products.models.Product

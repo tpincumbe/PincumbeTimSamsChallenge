@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
  * The data model that represents a Walmart Product and it's properties
  */
 @Parcelize
-data class Product (
+data class Product(
     val productId: String,
     val productName: String,
     val shortDescription: String?,

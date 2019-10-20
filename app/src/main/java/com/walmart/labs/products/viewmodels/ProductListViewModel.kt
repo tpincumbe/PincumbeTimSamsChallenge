@@ -5,7 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.walmart.labs.networking.ProductsApi
 import com.walmart.labs.products.models.Product
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ProductListViewModel : ViewModel() {
@@ -32,14 +35,15 @@ class ProductListViewModel : ViewModel() {
         productScope.launch {
             try {
                 val productsResponse = ProductsApi.fetchProducts(productPage)
-                val fullList = if(_productList.value == null) mutableListOf() else _productList.value!!
+                val fullList =
+                    if (_productList.value == null) mutableListOf() else _productList.value!!
                 if (clearList) {
                     fullList.clear()
                 }
                 fullList.addAll(productsResponse.products)
                 hasAdditonalProducts = fullList.size < productsResponse.totalProducts
                 Timber.d("full list: ${fullList.size}  total products: ${productsResponse.totalProducts}   has additional data: $hasAdditonalProducts")
-                    _productList.postValue(fullList)
+                _productList.postValue(fullList)
             } catch (e: Exception) {
                 Timber.e("Error getting products list: ${e.localizedMessage}")
                 _errorMessage.postValue("Error getting product list. Please try again later.")
