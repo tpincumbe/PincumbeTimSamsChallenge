@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="IndicatorRatingBar" parent="Widget.AppCompat.RatingBar.Small">
+        <item name="android:colorControlActivated">@android:color/black</item>
+        <item name="android:colorControlHighlight">@android:color/black</item>
+        <item name="android:isIndicator">true</item>
+        <item name="android:numStars">5</item>
+        <item name="android:stepSize">1</item>
+    </style>
+</resources>

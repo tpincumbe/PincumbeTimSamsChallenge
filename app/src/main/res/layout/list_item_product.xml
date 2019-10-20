@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutProduct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/default_margin">
+
+        <ImageView
+            android:id="@+id/imgProduct"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_product_image"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_max="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:productImage="@{product.productImage}"
+            app:srcCompat="@drawable/ic_dark_img_placeholder" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtInStock"
+            style="@style/ProductListChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_border"
+            android:text="@string/in_stock"
+            android:visibility="@{product.inStock ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toTopOf="@+id/txtProductName"
+            app:layout_constraintStart_toStartOf="@+id/txtProductName"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtProductName"
+            style="@style/ProductHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_margin"
+            android:text="@{product.productName}"
+            app:layout_constraintBottom_toTopOf="@+id/ratingProduct"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/imgProduct"
+            app:layout_constraintTop_toBottomOf="@+id/txtInStock"
+            tools:text="Product Name" />
+
+        <androidx.appcompat.widget.AppCompatRatingBar
+            android:id="@+id/ratingProduct"
+            style="@style/IndicatorRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_margin_top"
+            android:rating="@{product.reviewRating}"
+            app:layout_constraintStart_toStartOf="@+id/txtProductName"
+            app:layout_constraintTop_toBottomOf="@+id/txtProductName"
+            tools:rating="3" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtProductReviewCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_margin"
+            android:text="@{Integer.toString(product.reviewCount)}"
+            app:layout_constraintBottom_toBottomOf="@+id/ratingProduct"
+            app:layout_constraintStart_toEndOf="@id/ratingProduct"
+            app:layout_constraintTop_toTopOf="@+id/ratingProduct"
+            tools:text="690" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtProductPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_margin_top"
+            android:text="@{product.price}"
+            app:layout_constraintStart_toStartOf="@+id/txtProductName"
+            app:layout_constraintTop_toBottomOf="@+id/ratingProduct"
+            tools:text="$123.45" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/productShortDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_margin_top"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/txtProductName"
+            app:layout_constraintTop_toBottomOf="@+id/txtProductPrice"
+            app:productDesc="@{product.shortDescription}"
+            tools:text="Product description" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="product"
+            type="com.walmart.labs.products.models.Product" />
+    </data>
+</layout>
