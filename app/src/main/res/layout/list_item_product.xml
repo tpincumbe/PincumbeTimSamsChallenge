@@ -7,13 +7,15 @@
         android:id="@+id/layoutProduct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/default_margin">
+        android:padding="@dimen/default_margin"
+        android:background="@android:color/white">
 
         <ImageView
             android:id="@+id/imgProduct"
             android:layout_width="75dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:contentDescription="@string/cd_product_image"
+            android:minHeight="75dp"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHeight_max="100dp"
@@ -27,7 +29,7 @@
             style="@style/ProductListChip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="4dp"
             android:background="@drawable/rounded_border"
             android:text="@string/in_stock"
             android:visibility="@{product.inStock ? View.VISIBLE : View.GONE}"
@@ -41,12 +43,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_margin"
-            app:productHtml="@{product.productName}"
             app:layout_constraintBottom_toTopOf="@+id/ratingProduct"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/imgProduct"
             app:layout_constraintTop_toBottomOf="@+id/txtInStock"
+            app:productHtml="@{product.productName}"
             tools:text="Product Name" />
 
         <androidx.appcompat.widget.AppCompatRatingBar
@@ -86,6 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_margin_top"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
