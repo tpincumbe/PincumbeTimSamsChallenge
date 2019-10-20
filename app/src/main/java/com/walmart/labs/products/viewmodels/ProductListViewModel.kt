@@ -3,7 +3,6 @@ package com.walmart.labs.products.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.material.snackbar.Snackbar
 import com.walmart.labs.networking.ProductsApi
 import com.walmart.labs.products.models.Product
 import kotlinx.coroutines.*
@@ -17,6 +16,9 @@ class ProductListViewModel : ViewModel() {
     private val _errorMessage = MutableLiveData<Any?>()
     val errorMessage: LiveData<Any?> get() = _errorMessage
 
+    private val _isRefreshing = MutableLiveData<Boolean>().apply { value = false }
+    val isRefreshing: LiveData<Boolean> get() = _isRefreshing
+
     private val productJob = Job()
     private val productScope = CoroutineScope(productJob + Dispatchers.IO)
 
@@ -28,15 +30,15 @@ class ProductListViewModel : ViewModel() {
 
     private fun fetchProducts(clearList: Boolean) {
         productScope.launch {
-            val deferredProducts = ProductsApi.retrofitService.getProductsDeferred(productPage)
             try {
-                val productList = deferredProducts.await()
+                val productList = ProductsApi.fetchProducts(productPage)
                 val fullList = _productList.value
                 if (clearList) {
                     fullList?.clear()
                 }
                 fullList?.addAll(productList)
                 _productList.postValue(fullList)
+                _isRefreshing.postValue(false)
             } catch (e: Exception) {
                 Timber.e("Error getting products list: ${e.localizedMessage}")
                 _errorMessage.postValue("Error getting product list. Please try again later.")
@@ -45,6 +47,7 @@ class ProductListViewModel : ViewModel() {
     }
 
     fun refreshData() {
+        _isRefreshing.value = true
         productPage = 1
         fetchProducts(true)
     }

@@ -9,6 +9,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import timber.log.Timber
+import java.lang.Exception
 
 const val BASE_URL = "https://mobile-tha-server.firebaseapp.com/"
 const val DEFAULT_PAGE_SIZE = "30"
@@ -30,11 +32,11 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 /**
- * A public interface that exposes functions to perform REST calls on [Products]
+ * A public interface that exposes functions to perform REST calls on [ProductsResponse]
  */
 interface ProductsApiService {
     @GET("/walmartproducts/{pageNumber}/{pageSize}")
-    fun getProductsDeferred(@Path("pageNumber") pageNumber: Int, @Path("pageSize") pageSize: String = DEFAULT_PAGE_SIZE): Deferred<List<Product>>
+    fun getProductsAsync(@Path("pageNumber") pageNumber: Int, @Path("pageSize") pageSize: String = DEFAULT_PAGE_SIZE): Deferred<ProductsResponse>
 }
 
 /**
@@ -42,6 +44,21 @@ interface ProductsApiService {
  */
 object ProductsApi {
     val retrofitService: ProductsApiService by lazy { retrofit.create(ProductsApiService::class.java) }
+
+    suspend fun fetchProducts(productPage: Int) : List<Product> {
+        val deferredProducts = retrofitService.getProductsAsync(productPage)
+        try {
+            val productsResponse = deferredProducts.await()
+            if (productsResponse.statusCode != 200) {
+                Timber.e("Error fetching products list: ${productsResponse.statusCode}")
+                throw (Exception("Error fetching products list"))
+            } else {
+                return productsResponse.products
+            }
+        } catch (e: Exception) {
+            throw(e)
+        }
+    }
 }
 
 class ProductsResponse(
