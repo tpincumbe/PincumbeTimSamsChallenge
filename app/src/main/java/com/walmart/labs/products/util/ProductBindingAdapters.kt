@@ -9,8 +9,9 @@ import com.bumptech.glide.Glide
 import com.walmart.labs.R
 import com.walmart.labs.networking.BASE_URL
 import com.walmart.labs.products.models.Product
+import timber.log.Timber
 
-@BindingAdapter("productDesc")
+@BindingAdapter("productHtml")
 fun bindProductDesc(textView: TextView, description: String) {
     textView.text = HtmlCompat.fromHtml(
         description,

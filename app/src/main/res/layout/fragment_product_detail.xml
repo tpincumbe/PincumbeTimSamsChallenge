@@ -19,12 +19,12 @@
                 style="@style/ProductHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{product.productName}"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:productHtml="@{product.productName}"
                 tools:text="Product Name" />
 
             <androidx.appcompat.widget.AppCompatRatingBar
@@ -97,7 +97,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtProductPrice"
-                app:productDesc="@{product.longDescription}"
+                app:productHtml='@{product.longDescription ?? ""}'
                 tools:text="Product description" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

@@ -9,20 +9,20 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 
 class ProductListViewModel : ViewModel() {
-    private val _productList =
-        MutableLiveData<MutableList<Product>>().apply { value = mutableListOf() }
+    private val _productList = MutableLiveData<MutableList<Product>>()
     val productList: LiveData<MutableList<Product>> get() = _productList
 
     private val _errorMessage = MutableLiveData<Any?>()
     val errorMessage: LiveData<Any?> get() = _errorMessage
 
-    private val _isRefreshing = MutableLiveData<Boolean>().apply { value = false }
+    private val _isRefreshing = MutableLiveData<Boolean>().apply { value = true }
     val isRefreshing: LiveData<Boolean> get() = _isRefreshing
 
     private val productJob = Job()
     private val productScope = CoroutineScope(productJob + Dispatchers.IO)
 
     private var productPage = 1
+    private var hasAdditonalProducts = false
 
     init {
         fetchProducts(false)
@@ -31,18 +31,20 @@ class ProductListViewModel : ViewModel() {
     private fun fetchProducts(clearList: Boolean) {
         productScope.launch {
             try {
-                val productList = ProductsApi.fetchProducts(productPage)
-                val fullList = _productList.value
+                val productsResponse = ProductsApi.fetchProducts(productPage)
+                val fullList = if(_productList.value == null) mutableListOf() else _productList.value!!
                 if (clearList) {
-                    fullList?.clear()
+                    fullList.clear()
                 }
-                fullList?.addAll(productList)
-                _productList.postValue(fullList)
-                _isRefreshing.postValue(false)
+                fullList.addAll(productsResponse.products)
+                hasAdditonalProducts = fullList.size < productsResponse.totalProducts
+                Timber.d("full list: ${fullList.size}  total products: ${productsResponse.totalProducts}   has additional data: $hasAdditonalProducts")
+                    _productList.postValue(fullList)
             } catch (e: Exception) {
                 Timber.e("Error getting products list: ${e.localizedMessage}")
                 _errorMessage.postValue("Error getting product list. Please try again later.")
             }
+            _isRefreshing.postValue(false)
         }
     }
 

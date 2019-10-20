@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_margin"
-            android:text="@{product.productName}"
+            app:productHtml="@{product.productName}"
             app:layout_constraintBottom_toTopOf="@+id/ratingProduct"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -91,7 +91,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/txtProductName"
             app:layout_constraintTop_toBottomOf="@+id/txtProductPrice"
-            app:productDesc="@{product.shortDescription}"
+            app:productHtml='@{product.shortDescription ?? ""}'
             tools:text="Product description" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

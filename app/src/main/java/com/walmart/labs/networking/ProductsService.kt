@@ -45,7 +45,7 @@ interface ProductsApiService {
 object ProductsApi {
     val retrofitService: ProductsApiService by lazy { retrofit.create(ProductsApiService::class.java) }
 
-    suspend fun fetchProducts(productPage: Int) : List<Product> {
+    suspend fun fetchProducts(productPage: Int) : ProductsResponse {
         val deferredProducts = retrofitService.getProductsAsync(productPage)
         try {
             val productsResponse = deferredProducts.await()
@@ -53,7 +53,7 @@ object ProductsApi {
                 Timber.e("Error fetching products list: ${productsResponse.statusCode}")
                 throw (Exception("Error fetching products list"))
             } else {
-                return productsResponse.products
+                return productsResponse
             }
         } catch (e: Exception) {
             throw(e)
@@ -66,4 +66,7 @@ class ProductsResponse(
     val totalProducts: Long,
     val pageNumber: Int,
     val statusCode: Int
-)
+) {
+    override fun toString(): String =
+        "Status: $statusCode pageNumber: $pageNumber totalProducts: $totalProducts productsList size: ${products.size}"
+}
