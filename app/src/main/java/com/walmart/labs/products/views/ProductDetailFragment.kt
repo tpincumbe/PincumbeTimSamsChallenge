@@ -1,12 +1,17 @@
 package com.walmart.labs.products.views
 
+import android.app.Activity
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.snackbar.Snackbar
+import com.walmart.labs.MainActivity
 
 import com.walmart.labs.R
 import com.walmart.labs.databinding.FragmentProductDetailBinding
@@ -50,8 +55,12 @@ class ProductDetailFragment : Fragment() {
         if (product == null) {
             Timber.e("Product parcelable is null when creating detail fragment")
             fragmentManager?.popBackStack()
-            TODO("snack bar error message")
+            showSnackbarError("Error loading product details. Please try again later.")
         }
         binding.product = product
+    }
+
+    private fun showSnackbarError(msg: String) {
+        (activity as MainActivity).createSnackbar(msg)
     }
 }

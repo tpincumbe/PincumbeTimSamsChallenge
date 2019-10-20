@@ -65,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_margin"
-            android:text="@{Integer.toString(product.reviewCount)}"
+            android:text="@{Long.toString(product.reviewCount)}"
             app:layout_constraintBottom_toBottomOf="@+id/ratingProduct"
             app:layout_constraintStart_toEndOf="@id/ratingProduct"
             app:layout_constraintTop_toTopOf="@+id/ratingProduct"

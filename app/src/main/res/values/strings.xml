@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">WalmartLabs</string>
-    <string name="title_item_detail">Item Detail</string>
     <string name="cd_product_image">Sample Image of the Product</string>
     <string name="in_stock">IN STOCK</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

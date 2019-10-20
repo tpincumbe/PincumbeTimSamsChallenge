@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import com.walmart.labs.MainActivity
 
 import com.walmart.labs.R
 import com.walmart.labs.databinding.FragmentProductListBinding
@@ -39,7 +42,8 @@ class ProductListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_product_list, container, false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_product_list, container, false)
         return binding.root
     }
 
@@ -53,12 +57,35 @@ class ProductListFragment : Fragment() {
             layoutManager = manager
             context?.let { addItemDecoration(DividerItemDecoration(context, manager.orientation)) }
         }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
+            error?.let {
+                when (it) {
+                    is Int -> showSnackbarError(getString(it))
+                    is String -> showSnackbarError(it)
+                }
+                viewModel.onErrorShown()
+            }
+        })
     }
 
     private fun onProductTapped(product: Product, position: Int) {
         Timber.d("Tapped on ${product.productId}: ${product.productName}")
-        Toast.makeText(context, "Tapped on ${product.productId}: ${product.productName}", Toast.LENGTH_SHORT).show()
-        findNavController().navigate(ProductListFragmentDirections
-            .actionProductListFragmentToProductDetailPagerFragment(viewModel.productList.value?.toTypedArray()!!, position))
+        Toast.makeText(
+            context,
+            "Tapped on ${product.productId}: ${product.productName}",
+            Toast.LENGTH_SHORT
+        ).show()
+        findNavController().navigate(
+            ProductListFragmentDirections
+                .actionProductListFragmentToProductDetailPagerFragment(
+                    viewModel.productList.value?.toTypedArray()!!,
+                    position
+                )
+        )
+    }
+
+    private fun showSnackbarError(msg: String) {
+        (activity as MainActivity).createSnackbar(msg)
     }
 }

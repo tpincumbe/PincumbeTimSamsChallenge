@@ -7,7 +7,7 @@
         android:id="@+id/layoutSwipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:refreshListener="@{() -> viewmodel.refreshData()}"
+        app:onRefreshListener="@{() -> viewModel.refreshData()}"
         tools:context=".products.views.ProductListFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,7 +20,7 @@
                 android:layout_height="match_parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:productList="@{safeUnbox(viewModel.productList)}"
+                app:productList="@{viewModel.productList}"
                 tools:listitem="@layout/list_item_product" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
