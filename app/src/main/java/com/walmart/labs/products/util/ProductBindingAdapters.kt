@@ -36,3 +36,8 @@ fun bindProductList(recyclerView: RecyclerView, productList: MutableList<Product
         adapter.submitList(it)
     }
 }
+
+@BindingAdapter("productName")
+fun bindProductName(textView: TextView, name: String) {
+    textView.text = name.replace("\uFFFD", " ")
+}

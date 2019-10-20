@@ -25,7 +25,11 @@ class ProductListViewModel : ViewModel() {
     private val productScope = CoroutineScope(productJob + Dispatchers.IO)
 
     private var productPage = 1
-    private var hasAdditonalProducts = false
+    var hasAdditionalProducts = false
+        private set
+
+    private val _isLoadingAdditional = MutableLiveData<Boolean>().apply { value = false }
+    val isLoadingAdditional: LiveData<Boolean> get() = _isLoadingAdditional
 
     init {
         fetchProducts(false)
@@ -40,15 +44,18 @@ class ProductListViewModel : ViewModel() {
                 if (clearList) {
                     fullList.clear()
                 }
-                fullList.addAll(productsResponse.products)
-                hasAdditonalProducts = fullList.size < productsResponse.totalProducts
-                Timber.d("full list: ${fullList.size}  total products: ${productsResponse.totalProducts}   has additional data: $hasAdditonalProducts")
+                val newProducts = productsResponse.products
+                fullList.addAll(newProducts)
+                hasAdditionalProducts = fullList.size < productsResponse.totalProducts
+                Timber.d("full list: ${fullList.size}  total products: ${productsResponse.totalProducts}   has additional data: $hasAdditionalProducts")
                 _productList.postValue(fullList)
+                productPage++
             } catch (e: Exception) {
                 Timber.e("Error getting products list: ${e.localizedMessage}")
                 _errorMessage.postValue("Error getting product list. Please try again later.")
             }
             _isRefreshing.postValue(false)
+            _isLoadingAdditional.postValue(false)
         }
     }
 
@@ -56,6 +63,11 @@ class ProductListViewModel : ViewModel() {
         _isRefreshing.value = true
         productPage = 1
         fetchProducts(true)
+    }
+
+    fun fetchAddtionalProducts() {
+        _isLoadingAdditional.value = true
+        fetchProducts(false)
     }
 
     fun onErrorShown() {

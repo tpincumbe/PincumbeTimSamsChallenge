@@ -17,14 +17,14 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txtProductName"
                 style="@style/ProductHeader"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:productHtml="@{product.productName}"
+                app:productName="@{product.productName}"
                 tools:text="Product Name" />
 
             <androidx.appcompat.widget.AppCompatRatingBar
