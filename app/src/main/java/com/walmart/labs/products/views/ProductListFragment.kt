@@ -25,7 +25,8 @@ import java.lang.RuntimeException
 class ProductListFragment : Fragment() {
 
     companion object {
-        fun newInstance() = ProductListFragment()
+        fun newInstance(isTwoPane: Boolean) {
+            ProductListFragment()}
     }
 
     private lateinit var binding: FragmentProductListBinding
@@ -111,5 +112,7 @@ class ProductListFragment : Fragment() {
 
     interface OnFragmentInteractionListener {
         fun onProductTapped(position: Int, productList: MutableList<Product>)
+
+        fun updateProductDetailPage(position: Int, productList: MutableList<Product>)
     }
 }

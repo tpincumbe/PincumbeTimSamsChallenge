@@ -24,8 +24,8 @@ class ProductDetailPagerFragment : Fragment() {
 
     companion object {
         fun newInstance(
-            productList: MutableList<Product>,
-            selectedProduct: Int
+            selectedProduct: Int,
+            productList: MutableList<Product>
         ): ProductDetailPagerFragment {
             val bundle = Bundle()
             bundle.putInt(SELECTED_PROD_TAG, selectedProduct)

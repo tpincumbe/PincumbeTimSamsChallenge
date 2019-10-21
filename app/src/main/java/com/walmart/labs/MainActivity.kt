@@ -18,13 +18,16 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
-    private val twoPane: Boolean by lazy {
+    private val isTwoPane: Boolean by lazy {
         frag_product_details != null
     }
 
     private val fragProductList: ProductListFragment by lazy {
-        ProductListFragment.newInstance()
+        ProductListFragment.newInstance(isTwoPane)
     }
+
+    private var fragProductDetail: ProductDetailPagerFragment? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +60,18 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
     override fun onProductTapped(position: Int, productList: MutableList<Product>) {
         Timber.d("Tapped on ${productList[position].productId}: ${productList[position].productName}")
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frag_product_list, ProductDetailPagerFragment.newInstance(productList, position))
+            .replace(R.id.frag_product_list, ProductDetailPagerFragment.newInstance(position, productList))
             .addToBackStack(PRODUCT_DETAIL_TAG)
             .commit()
+    }
+
+    override fun updateProductDetailPage(position: Int, productList: MutableList<Product>) {
+        if (fragProductDetail == null) {
+            fragProductDetail = ProductDetailPagerFragment.newInstance(position, productList).apply {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frag_product_details, this)
+                    .commit()
+            }
+        }
     }
 }
