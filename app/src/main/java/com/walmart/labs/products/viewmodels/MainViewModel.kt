@@ -18,16 +18,18 @@ class MainViewModelFactory(private val isTwoPane: Boolean) : ViewModelProvider.F
     }
 }
 
-
 class MainViewModel(private val isTwoPane: Boolean) : ViewModel() {
     val fragProductList: ProductListFragment = ProductListFragment.newInstance(isTwoPane)
 
-    var fragProductDetail: ProductDetailPagerFragment? = null
-        private set
+    var fragProductDetail: ProductDetailPagerFragment?
+
+    init {
+        fragProductDetail = null
+    }
 
     fun updateProductDetailPage(position: Int, productList: MutableList<Product>) {
         fragProductDetail?.updateSelectedItem(position, productList) ?: run {
-            fragProductDetail = ProductDetailPagerFragment.newInstance(position, productList)
+            fragProductDetail = ProductDetailPagerFragment.newInstance(position, productList, isTwoPane)
         }
     }
 }

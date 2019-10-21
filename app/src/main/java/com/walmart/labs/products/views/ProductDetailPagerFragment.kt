@@ -1,6 +1,7 @@
 package com.walmart.labs.products.views
 
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -25,14 +26,29 @@ class ProductDetailPagerFragment : Fragment() {
     companion object {
         fun newInstance(
             selectedProduct: Int,
-            productList: MutableList<Product>
+            productList: MutableList<Product>,
+            isTwoPane: Boolean
         ): ProductDetailPagerFragment =
             ProductDetailPagerFragment().apply {
                 arguments = Bundle().apply {
                     putInt(SELECTED_PROD_TAG, selectedProduct)
                     putParcelableArrayList(PRODUCT_LIST_TAG, productList as ArrayList)
+                    putBoolean(TWO_PANE_TAG, isTwoPane)
                 }
             }
+    }
+
+    private var mListener: OnFragmentInteractionListener? = null
+
+    private var isTwoPane = false
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnFragmentInteractionListener) {
+            mListener = context
+        } else {
+            throw RuntimeException(" $context must implement OnFragmentInteractionListener")
+        }
     }
 
     override fun onCreateView(
@@ -51,9 +67,20 @@ class ProductDetailPagerFragment : Fragment() {
         }
 
         arguments?.let {
-            val position = it.getInt(SELECTED_PROD_TAG)
-            val productsList = it.getParcelableArrayList<Product>(PRODUCT_LIST_TAG)?.toMutableList()
-                ?: mutableListOf()
+            isTwoPane = it.getBoolean(TWO_PANE_TAG, false)
+            val position: Int
+            val productsList: MutableList<Product>
+
+            if (isTwoPane) {
+                position = it.getInt(SELECTED_PROD_TAG)
+                productsList = it.getParcelableArrayList<Product>(PRODUCT_LIST_TAG)?.toMutableList()
+                    ?: mutableListOf()
+            } else {
+                val args = ProductDetailPagerFragmentArgs.fromBundle(it)
+                position = args.selectedProductPos
+                productsList = args.productList.toMutableList()
+            }
+
             updateSelectedItem(position, productsList)
         }
     }
@@ -73,10 +100,19 @@ class ProductDetailPagerFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == android.R.id.home) {
-            (activity as MainActivity).supportFragmentManager.popBackStack()
+            mListener?.goBack()
             true
         } else {
             super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mListener = null
+    }
+
+    interface OnFragmentInteractionListener {
+        fun goBack()
     }
 }

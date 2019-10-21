@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,7 +49,17 @@ class ProductListFragment : Fragment() {
     private val productListAdapter: ProductListAdapter by lazy {
         ProductListAdapter { position ->
             viewModel.selectedProduct = position
-            mListener?.onProductTapped(position, viewModel.productList.value ?: mutableListOf())
+            if (isTwoPane) {
+                mListener?.onProductTapped(position, viewModel.productList.value ?: mutableListOf())
+            } else {
+                findNavController().navigate(
+                    ProductListFragmentDirections
+                        .actionProductListFragmentToProductDetailPagerFragment(
+                            viewModel.productList.value?.toTypedArray()!!,
+                            position
+                        )
+                )
+            }
         }
     }
 

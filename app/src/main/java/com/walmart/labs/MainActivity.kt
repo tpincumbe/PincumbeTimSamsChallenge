@@ -1,7 +1,7 @@
 package com.walmart.labs
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
@@ -13,9 +13,8 @@ import com.walmart.labs.products.views.ProductListFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
-const val PRODUCT_DETAIL_TAG = "productDetail"
-
-class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteractionListener,
+    ProductDetailPagerFragment.OnFragmentInteractionListener {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -37,11 +36,10 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.frag_product_list, viewModel.fragProductList)
-            .commit()
-
-        loadProductDetailPage()
+        if (isTwoPane) {
+            loadProductListPage()
+            loadProductDetailPage()
+        }
     }
 
     fun createSnackbar(msg: String) {
@@ -67,14 +65,6 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
         Timber.d("Tapped on ${productList[position].productId}: ${productList[position].productName}")
         if (isTwoPane) {
             viewModel.fragProductDetail?.updateSelectedItem(position, productList)
-        } else {
-            supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.frag_product_list,
-                    ProductDetailPagerFragment.newInstance(position, productList)
-                )
-                .addToBackStack(PRODUCT_DETAIL_TAG)
-                .commit()
         }
     }
 
@@ -83,11 +73,22 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
         loadProductDetailPage()
     }
 
+    private fun loadProductListPage() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frag_product_list, viewModel.fragProductList)
+            .commit()
+    }
+
     private fun loadProductDetailPage() {
         viewModel.fragProductDetail?.let {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.frag_product_details, it)
                 .commit()
         }
+    }
+
+    override fun goBack() {
+        supportFragmentManager.popBackStack()
+        viewModel.fragProductDetail = null
     }
 }
