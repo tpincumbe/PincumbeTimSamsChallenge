@@ -26,14 +26,13 @@ class ProductDetailPagerFragment : Fragment() {
         fun newInstance(
             selectedProduct: Int,
             productList: MutableList<Product>
-        ): ProductDetailPagerFragment {
-            val bundle = Bundle()
-            bundle.putInt(SELECTED_PROD_TAG, selectedProduct)
-            bundle.putParcelableArrayList(PRODUCT_LIST_TAG, productList as ArrayList)
-            val frag = ProductDetailPagerFragment()
-            frag.arguments = bundle
-            return frag
-        }
+        ): ProductDetailPagerFragment =
+            ProductDetailPagerFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(SELECTED_PROD_TAG, selectedProduct)
+                    putParcelableArrayList(PRODUCT_LIST_TAG, productList as ArrayList)
+                }
+            }
     }
 
     override fun onCreateView(
@@ -55,13 +54,17 @@ class ProductDetailPagerFragment : Fragment() {
             val position = it.getInt(SELECTED_PROD_TAG)
             val productsList = it.getParcelableArrayList<Product>(PRODUCT_LIST_TAG)?.toMutableList()
                 ?: mutableListOf()
-            pagerProductDetail.apply {
-                adapter = ProductDetailPagerAdapter(
-                    productsList,
-                    (activity as MainActivity).supportFragmentManager
-                )
-                currentItem = position
-            }
+            updateSelectedItem(position, productsList)
+        }
+    }
+
+    fun updateSelectedItem(position: Int, productsList: MutableList<Product>) {
+        pagerProductDetail.apply {
+            adapter = ProductDetailPagerAdapter(
+                productsList,
+                (activity as MainActivity).supportFragmentManager
+            )
+            currentItem = position
         }
     }
 

@@ -19,24 +19,37 @@ import com.walmart.labs.databinding.FragmentProductListBinding
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.util.ProductListAdapter
 import com.walmart.labs.products.viewmodels.ProductListViewModel
-import java.lang.RuntimeException
+import com.walmart.labs.products.viewmodels.ProductListViewModelFactory
 
+
+const val TWO_PANE_TAG = "twoPaneTag"
 
 class ProductListFragment : Fragment() {
+    private var isTwoPane = false
 
     companion object {
-        fun newInstance(isTwoPane: Boolean) {
-            ProductListFragment()}
+        fun newInstance(isTwoPane: Boolean = false) =
+            ProductListFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(TWO_PANE_TAG, isTwoPane)
+                }
+            }
     }
 
     private lateinit var binding: FragmentProductListBinding
 
+    private val factory: ProductListViewModelFactory by lazy {
+        ProductListViewModelFactory(isTwoPane)
+    }
     private val viewModel: ProductListViewModel by lazy {
-        ViewModelProviders.of(this).get(ProductListViewModel::class.java)
+        ViewModelProviders.of(this, factory).get(ProductListViewModel::class.java)
     }
 
+    private var selectedProduct = 0
+
     private val productListAdapter: ProductListAdapter by lazy {
-        ProductListAdapter {position ->
+        ProductListAdapter { position ->
+            selectedProduct = 0
             mListener?.onProductTapped(position, viewModel.productList.value ?: mutableListOf())
         }
     }
@@ -63,6 +76,7 @@ class ProductListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        isTwoPane = arguments?.getBoolean(TWO_PANE_TAG, false) ?: false
         activity?.title = "Walmart"
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -97,6 +111,12 @@ class ProductListFragment : Fragment() {
                     is String -> showSnackbarError(it)
                 }
                 viewModel.onErrorShown()
+            }
+        })
+
+        viewModel.productList.observe(viewLifecycleOwner, Observer {list ->
+            if (list.isNotEmpty() && isTwoPane) {
+                mListener?.updateProductDetailPage(selectedProduct, list)
             }
         })
     }

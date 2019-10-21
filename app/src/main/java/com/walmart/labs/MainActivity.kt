@@ -59,10 +59,17 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
 
     override fun onProductTapped(position: Int, productList: MutableList<Product>) {
         Timber.d("Tapped on ${productList[position].productId}: ${productList[position].productName}")
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.frag_product_list, ProductDetailPagerFragment.newInstance(position, productList))
-            .addToBackStack(PRODUCT_DETAIL_TAG)
-            .commit()
+        if (isTwoPane) {
+            fragProductDetail?.updateSelectedItem(position, productList)
+        } else {
+            supportFragmentManager.beginTransaction()
+                .replace(
+                    R.id.frag_product_list,
+                    ProductDetailPagerFragment.newInstance(position, productList)
+                )
+                .addToBackStack(PRODUCT_DETAIL_TAG)
+                .commit()
+        }
     }
 
     override fun updateProductDetailPage(position: Int, productList: MutableList<Product>) {
