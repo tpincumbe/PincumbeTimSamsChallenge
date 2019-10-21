@@ -21,6 +21,7 @@ import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.util.ProductListAdapter
 import com.walmart.labs.products.viewmodels.ProductListViewModel
 import com.walmart.labs.products.viewmodels.ProductListViewModelFactory
+import timber.log.Timber
 
 
 const val TWO_PANE_TAG = "twoPaneTag"
@@ -106,6 +107,7 @@ class ProductListFragment : Fragment() {
                             && firstVisibleItemPosition >= 0
                             && totalItemCount >= PAGE_SIZE
                         ) {
+                            Timber.d("Fetching Additional Products from scroll")
                             viewModel.fetchAddtionalProducts()
                         }
                     }

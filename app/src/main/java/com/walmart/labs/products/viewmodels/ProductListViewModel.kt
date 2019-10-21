@@ -36,8 +36,8 @@ class ProductListViewModel(private val isTwoPane: Boolean) : ViewModel() {
     private val _productList = MutableLiveData<MutableList<Product>>()
     val productList: LiveData<MutableList<Product>> get() = _productList
 
-    private val productJob = Job()
-    private val productScope = CoroutineScope(productJob + Dispatchers.IO)
+    private var productJob = Job()
+    private var productScope = CoroutineScope(productJob + Dispatchers.IO)
 
     private var productPage = 1
     var hasAdditionalProducts = false
@@ -50,9 +50,14 @@ class ProductListViewModel(private val isTwoPane: Boolean) : ViewModel() {
     }
 
     private fun fetchProducts(clearList: Boolean) {
+        if (productJob.isCancelled) {
+            productJob = Job()
+            productScope = CoroutineScope(productJob + Dispatchers.IO)
+        }
         productScope.launch {
             try {
                 val productsResponse = ProductsApi.fetchProducts(productPage)
+                Timber.d("got products response $productsResponse")
                 val fullList =
                     if (_productList.value == null) mutableListOf() else _productList.value!!
                 if (clearList) {
