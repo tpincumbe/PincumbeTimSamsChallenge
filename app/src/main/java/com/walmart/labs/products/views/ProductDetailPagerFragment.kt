@@ -21,11 +21,18 @@ const val SELECTED_PROD_TAG = "selectedProductTag"
 const val PRODUCT_LIST_TAG = "productListTag"
 
 /**
- *
+ * A fragment containing a view pager that displays product details
+ * The view pager is used to swipe between products easily.
  */
 class ProductDetailPagerFragment : Fragment() {
 
     companion object {
+        /**
+         * Create a new ProductDetailPagerFragment with the supplied data
+         * @param selectedProduct - the currently selected product to display first
+         * @param productList - The product list to swipe through
+         * @param isTwoPane - Used to update the UI depending on which view we're in
+         */
         fun newInstance(
             selectedProduct: Int,
             productList: MutableList<Product>,
@@ -40,8 +47,14 @@ class ProductDetailPagerFragment : Fragment() {
             }
     }
 
+    /**
+     * The activity / fragment interaction listener object
+     */
     private var mListener: OnFragmentInteractionListener? = null
 
+    /**
+     * Are we in a tablet view or phone view
+     */
     private var isTwoPane = false
 
     override fun onAttach(context: Context) {
@@ -63,21 +76,28 @@ class ProductDetailPagerFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         activity?.title = "Product Details"
+
+        /**
+         * Add the back button to the actio bar
+         */
         (activity as MainActivity).apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             setHasOptionsMenu(true)
         }
 
+        /**
+         * Get the data passed into the fragment
+         */
         arguments?.let {
             isTwoPane = it.getBoolean(TWO_PANE_TAG, false)
             val position: Int
             val productsList: MutableList<Product>
 
-            if (isTwoPane) {
+            if (isTwoPane) { //Use the fragment extras to get the data
                 position = it.getInt(SELECTED_PROD_TAG)
                 productsList = it.getParcelableArrayList<Product>(PRODUCT_LIST_TAG)?.toMutableList()
                     ?: mutableListOf()
-            } else {
+            } else { //Use the navigation controller to get the data
                 val args = ProductDetailPagerFragmentArgs.fromBundle(it)
                 position = args.selectedProductPos
                 productsList = args.productList.toMutableList()
@@ -87,17 +107,24 @@ class ProductDetailPagerFragment : Fragment() {
         }
     }
 
+    /**
+     * This is used to set the 1st item to display product details for
+     * @param position - the position of the selected product in the list
+     * @param productsList - the product list to swipe through
+     */
     fun updateSelectedItem(position: Int, productsList: MutableList<Product>) {
+        //Update the fragment arguments. This is needed to save data on screen rotate
         arguments?.putInt(SELECTED_PROD_TAG, position)
         arguments?.putParcelableArrayList(PRODUCT_LIST_TAG, productsList as ArrayList)
 
+        // Create and set the pager adapter properties
         pagerProductDetail.apply {
             adapter = ProductDetailPagerAdapter(
                 productsList,
                 (activity as MainActivity).supportFragmentManager
             )
             currentItem = position
-            if (isTwoPane) {
+            if (isTwoPane) { // If in tablet view add a scroll listener to highlight the selected product in the list
                 addOnPageChangeListener(object : OnPageChangeListener {
                     override fun onPageScrollStateChanged(state: Int) {}
 
@@ -118,6 +145,9 @@ class ProductDetailPagerFragment : Fragment() {
         }
     }
 
+    /**
+     * Overriding to provide action bar back button support
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == android.R.id.home) {
             mListener?.goBack()
@@ -132,6 +162,9 @@ class ProductDetailPagerFragment : Fragment() {
         mListener = null
     }
 
+    /**
+     * Interface used to provide interaction between the activity and fragment
+     */
     interface OnFragmentInteractionListener {
         fun goBack()
 

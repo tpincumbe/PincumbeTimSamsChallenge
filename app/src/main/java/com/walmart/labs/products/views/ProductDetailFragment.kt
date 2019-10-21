@@ -14,9 +14,17 @@ import timber.log.Timber
 
 private const val PRODUCT_TAG = "productTag"
 
+/**
+ * This fragment represents a single product detail view
+ * This is used in the view pager to swipe between products
+ */
 class ProductDetailFragment : Fragment() {
 
     companion object {
+        /**
+         * Create a new fragment to pass in a product
+         * @param product - the product to display
+         */
         fun newInstance(product: Product): ProductDetailFragment {
             val frag = ProductDetailFragment()
             val bundle = Bundle()
@@ -26,6 +34,9 @@ class ProductDetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Binding variable for the detail page
+     */
     private lateinit var binding: FragmentProductDetailBinding
 
     override fun onCreateView(
@@ -51,6 +62,9 @@ class ProductDetailFragment : Fragment() {
         }
     }
 
+    /**
+     * A helper function used to display a snackbar error message
+     */
     private fun showSnackbarError(msg: String) {
         (activity as MainActivity).createSnackbar(msg)
     }

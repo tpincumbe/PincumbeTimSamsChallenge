@@ -3,6 +3,9 @@ package com.walmart.labs
 import android.app.Application
 import timber.log.Timber
 
+/**
+ * Overriding the application in order to plant a Timber tree for logging.
+ */
 class WalmartLabsApplication : Application() {
     override fun onCreate() {
         super.onCreate()

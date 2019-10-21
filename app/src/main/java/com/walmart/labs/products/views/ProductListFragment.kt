@@ -26,10 +26,17 @@ import timber.log.Timber
 
 const val TWO_PANE_TAG = "twoPaneTag"
 
+/**
+ * A fragment containing the list of products
+ */
 class ProductListFragment : Fragment() {
     private var isTwoPane = false
 
     companion object {
+        /**
+         * Create a new ProductListFragment with the supplied data
+         * @param isTwoPane - Used to update the UI depending on which view we're in
+         */
         fun newInstance(isTwoPane: Boolean = false) =
             ProductListFragment().apply {
                 arguments = Bundle().apply {
@@ -38,22 +45,35 @@ class ProductListFragment : Fragment() {
             }
     }
 
+    /**
+     * The data binding object for the product list fragment
+     */
     private lateinit var binding: FragmentProductListBinding
 
+    /**
+     * The factory to create the view model tha tis used for the product list
+     */
     private val factory: ProductListViewModelFactory by lazy {
         ProductListViewModelFactory(isTwoPane)
     }
+
+    /**
+     * The viewmodel that represents the product list fragment
+     */
     private val viewModel: ProductListViewModel by lazy {
         ViewModelProviders.of(this, factory).get(ProductListViewModel::class.java)
     }
 
+    /**
+     * The Reycler View List adapter for the product list
+     */
     private val productListAdapter: ProductListAdapter by lazy {
         ProductListAdapter(isTwoPane) { position ->
             viewModel.selectedProduct = position
-            if (isTwoPane) {
+            if (isTwoPane) { // If tablet view then we will use fragment transactions
                 updateListAdapterSelected(position)
                 mListener?.onProductTapped(position, viewModel.productList.value ?: mutableListOf())
-            } else {
+            } else { // If phone view then we will use the navigation controller
                 findNavController().navigate(
                     ProductListFragmentDirections
                         .actionProductListFragmentToProductDetailPagerFragment(
@@ -65,6 +85,9 @@ class ProductListFragment : Fragment() {
         }
     }
 
+    /**
+     * The activity / fragment interaction listener object
+     */
     private var mListener: OnFragmentInteractionListener? = null
 
     override fun onAttach(context: Context) {
@@ -96,6 +119,7 @@ class ProductListFragment : Fragment() {
             val manager = LinearLayoutManager(activity)
             layoutManager = manager
             context?.let { addItemDecoration(DividerItemDecoration(context, manager.orientation)) }
+            // Add scroll listener to fetch additional data when we've reached the bottom of hte list
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -116,6 +140,9 @@ class ProductListFragment : Fragment() {
             })
         }
 
+        /**
+         * When the error message object is update display a new snack bar message
+         */
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
             error?.let {
                 when (it) {
@@ -126,6 +153,10 @@ class ProductListFragment : Fragment() {
             }
         })
 
+        /**
+         * TABLET VIEW ONLY
+         * When the product list is updated and is not empty then update the product detail fragment
+         */
         viewModel.productList.observe(viewLifecycleOwner, Observer {list ->
             if (list.isNotEmpty() && isTwoPane) {
                 updateListAdapterSelected(viewModel.selectedProduct)
@@ -134,15 +165,26 @@ class ProductListFragment : Fragment() {
         })
     }
 
+    /**
+     * Helper function to display an error message as a snack bar
+     */
     private fun showSnackbarError(msg: String) {
         (activity as MainActivity).createSnackbar(msg)
     }
 
+    /***
+     * TABLET VIEW ONLY
+     * Helper function to update the selected product in the list
+     */
     fun updateSelectedProduct(position: Int) {
         viewModel.selectedProduct = position
         updateListAdapterSelected(position)
     }
 
+    /**
+     * TABLET VIEW ONLY
+     * This updated the Detail Page adapter to display the newly selected product
+     */
     private fun updateListAdapterSelected(position: Int) {
         productListAdapter.apply {
             selectedProduct = position
@@ -155,6 +197,9 @@ class ProductListFragment : Fragment() {
         mListener = null
     }
 
+    /**
+     * Interface used to provide interaction between the activity and fragment
+     */
     interface OnFragmentInteractionListener {
         fun onProductTapped(position: Int, productList: MutableList<Product>)
 

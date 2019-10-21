@@ -8,9 +8,16 @@ import com.walmart.labs.databinding.ListItemProductBinding
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.views.ProductViewHolder
 
+/**
+ * This is the product list recycler view adapter. It uses [RecyclerView.ListAdapter] instead of [RecyclerView.Adapter]
+ */
 class ProductListAdapter(private val isTwoPane: Boolean, private val clickListener: (Int) -> Unit) :
     ListAdapter<Product, ProductViewHolder>(DiffCallback) {
 
+    /**
+     * TABLET VIEW ONLY
+     * This is used to highlight the selected product
+     */
     var selectedProduct = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder =

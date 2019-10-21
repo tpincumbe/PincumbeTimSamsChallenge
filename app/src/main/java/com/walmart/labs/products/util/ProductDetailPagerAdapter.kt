@@ -6,6 +6,9 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.views.ProductDetailFragment
 
+/**
+ * The adapter used to scroll product detail pages left and right
+ */
 class ProductDetailPagerAdapter(
     private val productsList: MutableList<Product>,
     manager: FragmentManager
