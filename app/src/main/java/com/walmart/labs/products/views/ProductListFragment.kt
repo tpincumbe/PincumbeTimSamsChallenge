@@ -1,5 +1,6 @@
 package com.walmart.labs.products.views
 
+import android.content.Context
 import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,10 +19,14 @@ import com.walmart.labs.databinding.FragmentProductListBinding
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.util.ProductListAdapter
 import com.walmart.labs.products.viewmodels.ProductListViewModel
-import timber.log.Timber
+import java.lang.RuntimeException
 
 
 class ProductListFragment : Fragment() {
+
+    companion object {
+        fun newInstance() = ProductListFragment()
+    }
 
     private lateinit var binding: FragmentProductListBinding
 
@@ -31,7 +35,20 @@ class ProductListFragment : Fragment() {
     }
 
     private val productListAdapter: ProductListAdapter by lazy {
-        ProductListAdapter { product, position -> onProductTapped(product, position) }
+        ProductListAdapter {position ->
+            mListener?.onProductTapped(position, viewModel.productList.value ?: mutableListOf())
+        }
+    }
+
+    private var mListener: OnFragmentInteractionListener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnFragmentInteractionListener) {
+            mListener = context
+        } else {
+            throw RuntimeException(" $context must implement OnFragmentInteractionListener")
+        }
     }
 
     override fun onCreateView(
@@ -83,18 +100,16 @@ class ProductListFragment : Fragment() {
         })
     }
 
-    private fun onProductTapped(product: Product, position: Int) {
-        Timber.d("Tapped on ${product.productId}: ${product.productName}")
-        findNavController().navigate(
-            ProductListFragmentDirections
-                .actionProductListFragmentToProductDetailPagerFragment(
-                    viewModel.productList.value?.toTypedArray()!!,
-                    position
-                )
-        )
-    }
-
     private fun showSnackbarError(msg: String) {
         (activity as MainActivity).createSnackbar(msg)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mListener = null
+    }
+
+    interface OnFragmentInteractionListener {
+        fun onProductTapped(position: Int, productList: MutableList<Product>)
     }
 }

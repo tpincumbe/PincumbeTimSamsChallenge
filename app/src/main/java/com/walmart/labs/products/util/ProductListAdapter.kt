@@ -8,7 +8,7 @@ import com.walmart.labs.databinding.ListItemProductBinding
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.views.ProductViewHolder
 
-class ProductListAdapter(private val clickListener: (Product, Int) -> Unit) :
+class ProductListAdapter(private val clickListener: (Int) -> Unit) :
     ListAdapter<Product, ProductViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder =

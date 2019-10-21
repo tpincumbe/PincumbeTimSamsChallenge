@@ -7,9 +7,9 @@ import com.walmart.labs.products.models.Product
 class ProductViewHolder(private val binding: ListItemProductBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bindView(product: Product, position: Int, clickListener: (Product, Int) -> Unit) {
+    fun bindView(product: Product, position: Int, clickListener: (Int) -> Unit) {
         binding.product = product
-        binding.layoutProduct.setOnClickListener { clickListener.invoke(product, position) }
+        binding.layoutProduct.setOnClickListener { clickListener.invoke(position) }
         binding.executePendingBindings()
     }
 }

@@ -7,18 +7,34 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
 import com.walmart.labs.MainActivity
 import com.walmart.labs.R
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.util.ProductDetailPagerAdapter
 import kotlinx.android.synthetic.main.fragment_product_detail_pager.*
-import timber.log.Timber
+import java.util.*
+
+const val SELECTED_PROD_TAG = "selectedProductTag"
+const val PRODUCT_LIST_TAG = "productListTag"
 
 /**
  *
  */
 class ProductDetailPagerFragment : Fragment() {
+
+    companion object {
+        fun newInstance(
+            productList: MutableList<Product>,
+            selectedProduct: Int
+        ): ProductDetailPagerFragment {
+            val bundle = Bundle()
+            bundle.putInt(SELECTED_PROD_TAG, selectedProduct)
+            bundle.putParcelableArrayList(PRODUCT_LIST_TAG, productList as ArrayList)
+            val frag = ProductDetailPagerFragment()
+            frag.arguments = bundle
+            return frag
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,11 +52,14 @@ class ProductDetailPagerFragment : Fragment() {
         }
 
         arguments?.let {
-            val args = ProductDetailPagerFragmentArgs.fromBundle(it)
-            val position = args.selectedProductPos
-            val productsList = args.productList.toMutableList()
+            val position = it.getInt(SELECTED_PROD_TAG)
+            val productsList = it.getParcelableArrayList<Product>(PRODUCT_LIST_TAG)?.toMutableList()
+                ?: mutableListOf()
             pagerProductDetail.apply {
-                adapter = ProductDetailPagerAdapter(productsList, (activity as MainActivity).supportFragmentManager)
+                adapter = ProductDetailPagerAdapter(
+                    productsList,
+                    (activity as MainActivity).supportFragmentManager
+                )
                 currentItem = position
             }
         }
