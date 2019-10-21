@@ -8,8 +8,10 @@ import com.walmart.labs.databinding.ListItemProductBinding
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.views.ProductViewHolder
 
-class ProductListAdapter(private val clickListener: (Int) -> Unit) :
+class ProductListAdapter(private val isTwoPane: Boolean, private val clickListener: (Int) -> Unit) :
     ListAdapter<Product, ProductViewHolder>(DiffCallback) {
+
+    var selectedProduct = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder =
         ProductViewHolder(
@@ -21,7 +23,12 @@ class ProductListAdapter(private val clickListener: (Int) -> Unit) :
         )
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) =
-        holder.bindView(getItem(position), position, clickListener)
+        holder.bindView(
+            getItem(position),
+            position,
+            (isTwoPane && selectedProduct == position),
+            clickListener
+        )
 
     companion object DiffCallback : DiffUtil.ItemCallback<Product>() {
         override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean =

@@ -48,9 +48,10 @@ class ProductListFragment : Fragment() {
     }
 
     private val productListAdapter: ProductListAdapter by lazy {
-        ProductListAdapter { position ->
+        ProductListAdapter(isTwoPane) { position ->
             viewModel.selectedProduct = position
             if (isTwoPane) {
+                updateListAdapterSelected(position)
                 mListener?.onProductTapped(position, viewModel.productList.value ?: mutableListOf())
             } else {
                 findNavController().navigate(
@@ -127,6 +128,7 @@ class ProductListFragment : Fragment() {
 
         viewModel.productList.observe(viewLifecycleOwner, Observer {list ->
             if (list.isNotEmpty() && isTwoPane) {
+                updateListAdapterSelected(viewModel.selectedProduct)
                 mListener?.updateProductDetailPage(viewModel.selectedProduct, list)
             }
         })
@@ -134,6 +136,18 @@ class ProductListFragment : Fragment() {
 
     private fun showSnackbarError(msg: String) {
         (activity as MainActivity).createSnackbar(msg)
+    }
+
+    fun updateSelectedProduct(position: Int) {
+        viewModel.selectedProduct = position
+        updateListAdapterSelected(position)
+    }
+
+    private fun updateListAdapterSelected(position: Int) {
+        productListAdapter.apply {
+            selectedProduct = position
+            notifyDataSetChanged()
+        }
     }
 
     override fun onDetach() {

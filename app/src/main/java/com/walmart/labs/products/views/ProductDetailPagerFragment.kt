@@ -8,6 +8,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.walmart.labs.MainActivity
 import com.walmart.labs.R
 import com.walmart.labs.products.models.Product
@@ -95,6 +97,24 @@ class ProductDetailPagerFragment : Fragment() {
                 (activity as MainActivity).supportFragmentManager
             )
             currentItem = position
+            if (isTwoPane) {
+                addOnPageChangeListener(object : OnPageChangeListener {
+                    override fun onPageScrollStateChanged(state: Int) {}
+
+                    override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int
+                    ) {
+                    }
+
+                    override fun onPageSelected(position: Int) {
+                        arguments?.putInt(SELECTED_PROD_TAG, position)
+                        mListener?.onPageSelected(position)
+                    }
+
+                })
+            }
         }
     }
 
@@ -114,5 +134,7 @@ class ProductDetailPagerFragment : Fragment() {
 
     interface OnFragmentInteractionListener {
         fun goBack()
+
+        fun onPageSelected(position: Int)
     }
 }

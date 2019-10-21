@@ -91,4 +91,8 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
         supportFragmentManager.popBackStack()
         viewModel.fragProductDetail = null
     }
+
+    override fun onPageSelected(position: Int) {
+        viewModel.fragProductList.updateSelectedProduct(position)
+    }
 }

@@ -2,6 +2,8 @@ package com.walmart.labs.products.util
 
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,6 +12,19 @@ import com.walmart.labs.R
 import com.walmart.labs.networking.BASE_URL
 import com.walmart.labs.products.models.Product
 
+@BindingAdapter("productListBackground")
+fun bindProductListBackground(layout: ConstraintLayout, isSelected: Boolean) {
+    layout.setBackgroundColor(
+        ContextCompat.getColor(
+            layout.context,
+            if (isSelected) {
+                R.color.highlight
+            } else {
+                android.R.color.white
+            }
+        )
+    )
+}
 
 @BindingAdapter("productHtml")
 fun bindProductDesc(textView: TextView, description: String) {
