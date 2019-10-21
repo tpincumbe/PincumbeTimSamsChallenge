@@ -49,7 +49,6 @@ class ProductListFragment : Fragment() {
 
     private val productListAdapter: ProductListAdapter by lazy {
         ProductListAdapter { position ->
-            selectedProduct = 0
             mListener?.onProductTapped(position, viewModel.productList.value ?: mutableListOf())
         }
     }

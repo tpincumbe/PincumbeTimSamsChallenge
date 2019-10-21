@@ -3,8 +3,11 @@ package com.walmart.labs
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import com.walmart.labs.products.models.Product
+import com.walmart.labs.products.viewmodels.MainViewModel
+import com.walmart.labs.products.viewmodels.MainViewModelFactory
 import com.walmart.labs.products.views.ProductDetailPagerFragment
 import com.walmart.labs.products.views.ProductListFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,20 +25,23 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
         frag_product_details != null
     }
 
-    private val fragProductList: ProductListFragment by lazy {
-        ProductListFragment.newInstance(isTwoPane)
+    private val factory: MainViewModelFactory by lazy {
+        MainViewModelFactory(isTwoPane)
     }
 
-    private var fragProductDetail: ProductDetailPagerFragment? = null
-
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProviders.of(this, factory).get(MainViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frag_product_list, fragProductList)
+            .replace(R.id.frag_product_list, viewModel.fragProductList)
             .commit()
+
+        loadProductDetailPage()
     }
 
     fun createSnackbar(msg: String) {
@@ -60,7 +66,7 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
     override fun onProductTapped(position: Int, productList: MutableList<Product>) {
         Timber.d("Tapped on ${productList[position].productId}: ${productList[position].productName}")
         if (isTwoPane) {
-            fragProductDetail?.updateSelectedItem(position, productList)
+            viewModel.fragProductDetail?.updateSelectedItem(position, productList)
         } else {
             supportFragmentManager.beginTransaction()
                 .replace(
@@ -73,12 +79,15 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
     }
 
     override fun updateProductDetailPage(position: Int, productList: MutableList<Product>) {
-        if (fragProductDetail == null) {
-            fragProductDetail = ProductDetailPagerFragment.newInstance(position, productList).apply {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.frag_product_details, this)
-                    .commit()
-            }
+        viewModel.updateProductDetailPage(position, productList)
+        loadProductDetailPage()
+    }
+
+    private fun loadProductDetailPage() {
+        viewModel.fragProductDetail?.let {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frag_product_details, it)
+                .commit()
         }
     }
 }
