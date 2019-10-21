@@ -45,10 +45,9 @@ class ProductListFragment : Fragment() {
         ViewModelProviders.of(this, factory).get(ProductListViewModel::class.java)
     }
 
-    private var selectedProduct = 0
-
     private val productListAdapter: ProductListAdapter by lazy {
         ProductListAdapter { position ->
+            viewModel.selectedProduct = position
             mListener?.onProductTapped(position, viewModel.productList.value ?: mutableListOf())
         }
     }
@@ -115,7 +114,7 @@ class ProductListFragment : Fragment() {
 
         viewModel.productList.observe(viewLifecycleOwner, Observer {list ->
             if (list.isNotEmpty() && isTwoPane) {
-                mListener?.updateProductDetailPage(selectedProduct, list)
+                mListener?.updateProductDetailPage(viewModel.selectedProduct, list)
             }
         })
     }

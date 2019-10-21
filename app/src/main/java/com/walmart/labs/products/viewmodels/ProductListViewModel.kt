@@ -43,6 +43,7 @@ class ProductListViewModel(private val isTwoPane: Boolean) : ViewModel() {
     var hasAdditionalProducts = false
         private set
 
+    var selectedProduct = 0
 
     init {
         fetchProducts(false)

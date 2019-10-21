@@ -59,6 +59,9 @@ class ProductDetailPagerFragment : Fragment() {
     }
 
     fun updateSelectedItem(position: Int, productsList: MutableList<Product>) {
+        arguments?.putInt(SELECTED_PROD_TAG, position)
+        arguments?.putParcelableArrayList(PRODUCT_LIST_TAG, productsList as ArrayList)
+
         pagerProductDetail.apply {
             adapter = ProductDetailPagerAdapter(
                 productsList,
