@@ -15,7 +15,7 @@
             android:layout_width="75dp"
             android:layout_height="0dp"
             android:contentDescription="@string/cd_product_image"
-            android:minHeight="75dp"
+            android:minHeight="100dp"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHeight_max="100dp"
@@ -58,8 +58,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_margin_top"
             android:rating="@{product.reviewRating}"
+            app:layout_constraintBottom_toTopOf="@+id/txtProductPrice"
+            app:layout_constraintEnd_toStartOf="@+id/txtProductReviewCount"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/txtProductName"
             app:layout_constraintTop_toBottomOf="@+id/txtProductName"
+            app:layout_constraintHorizontal_chainStyle="packed"
             tools:rating="3" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -71,6 +75,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/ratingProduct"
             app:layout_constraintStart_toEndOf="@id/ratingProduct"
             app:layout_constraintTop_toTopOf="@+id/ratingProduct"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="690" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -79,6 +84,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_margin_top"
             android:text="@{product.price}"
+            app:layout_constraintBottom_toTopOf="@+id/productShortDesc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/txtProductName"
             app:layout_constraintTop_toBottomOf="@+id/ratingProduct"
             tools:text="$123.45" />
@@ -95,7 +103,8 @@
             app:layout_constraintStart_toStartOf="@+id/txtProductName"
             app:layout_constraintTop_toBottomOf="@+id/txtProductPrice"
             app:productHtml='@{product.shortDescription ?? ""}'
-            tools:text="Product description" />
+            tools:text="Product description"
+            tools:visibility="visible"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>

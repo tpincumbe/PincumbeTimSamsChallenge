@@ -1,5 +1,6 @@
 package com.walmart.labs.products.util
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -38,10 +39,15 @@ fun bindProductListBackground(layout: ConstraintLayout, isSelected: Boolean) {
  */
 @BindingAdapter("productHtml")
 fun bindProductDesc(textView: TextView, description: String) {
-    textView.text = HtmlCompat.fromHtml(
-        description,
-        HtmlCompat.FROM_HTML_MODE_COMPACT or HtmlCompat.FROM_HTML_OPTION_USE_CSS_COLORS
-    )
+    if (description.isBlank()) {
+        textView.visibility = View.GONE
+    } else {
+        textView.text = HtmlCompat.fromHtml(
+            description,
+            HtmlCompat.FROM_HTML_MODE_COMPACT or HtmlCompat.FROM_HTML_OPTION_USE_CSS_COLORS
+        )
+//        textView.visibility = View.VISIBLE
+    }
 }
 
 /**

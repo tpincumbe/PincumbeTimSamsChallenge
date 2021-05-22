@@ -6,16 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.walmart.labs.MainActivity
-import com.walmart.labs.R
 import com.walmart.labs.databinding.FragmentProductListBinding
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.util.ProductListAdapter
@@ -48,7 +45,7 @@ class ProductListFragment : Fragment() {
     /**
      * The data binding object for the product list fragment
      */
-    private lateinit var binding: FragmentProductListBinding
+    private var binding: FragmentProductListBinding? = null
 
     /**
      * The factory to create the view model tha tis used for the product list
@@ -61,7 +58,7 @@ class ProductListFragment : Fragment() {
      * The viewmodel that represents the product list fragment
      */
     private val viewModel: ProductListViewModel by lazy {
-        ViewModelProviders.of(this, factory).get(ProductListViewModel::class.java)
+        ViewModelProvider(this@ProductListFragment, factory).get(ProductListViewModel::class.java)
     }
 
     /**
@@ -74,13 +71,22 @@ class ProductListFragment : Fragment() {
                 updateListAdapterSelected(position)
                 mListener?.onProductTapped(position, viewModel.productList.value ?: mutableListOf())
             } else { // If phone view then we will use the navigation controller
-                findNavController().navigate(
-                    ProductListFragmentDirections
-                        .actionProductListFragmentToProductDetailPagerFragment(
-                            viewModel.productList.value?.toTypedArray()!!,
-                            position
-                        )
-                )
+                viewModel.productList.value?.let {
+                    findNavController().navigate(
+                        ProductListFragmentDirections
+                            .actionProductListFragmentToProductDetailPagerFragment(
+                                it.toTypedArray(),
+                                position
+                            )
+                    )
+                }
+//                findNavController().navigate(
+//                    ProductListFragmentDirections
+//                        .actionProductListFragmentToProductDetailPagerFragment(
+//                            viewModel.productList.value?.toTypedArray()!!,
+//                            position
+//                        )
+//                )
             }
         }
     }
@@ -103,18 +109,17 @@ class ProductListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_product_list, container, false)
-        return binding.root
+        binding = FragmentProductListBinding.inflate(layoutInflater, container, false)
+        return binding?.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         isTwoPane = arguments?.getBoolean(TWO_PANE_TAG, false) ?: false
         activity?.title = "Walmart"
-        binding.lifecycleOwner = this
-        binding.viewModel = viewModel
-        binding.recyclerProductList.apply {
+        binding?.lifecycleOwner = this
+        binding?.viewModel = viewModel
+        binding?.recyclerProductList?.apply {
             adapter = productListAdapter
             val manager = LinearLayoutManager(activity)
             layoutManager = manager
@@ -143,7 +148,7 @@ class ProductListFragment : Fragment() {
         /**
          * When the error message object is update display a new snack bar message
          */
-        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
+        viewModel.errorMessage.observe(viewLifecycleOwner, { error ->
             error?.let {
                 when (it) {
                     is Int -> showSnackbarError(getString(it))
@@ -157,12 +162,28 @@ class ProductListFragment : Fragment() {
          * TABLET VIEW ONLY
          * When the product list is updated and is not empty then update the product detail fragment
          */
-        viewModel.productList.observe(viewLifecycleOwner, Observer {list ->
+        viewModel.productList.observe(viewLifecycleOwner, { list ->
             if (list.isNotEmpty() && isTwoPane) {
                 updateListAdapterSelected(viewModel.selectedProduct)
                 mListener?.updateProductDetailPage(viewModel.selectedProduct, list)
             }
         })
+
+        if (isTwoPane) {
+            (activity as MainActivity?)?.apply {
+                supportActionBar?.run {
+                    setDisplayHomeAsUpEnabled(false)
+                    setDisplayShowHomeEnabled(false)
+                    setHomeButtonEnabled(false)
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+//        activity?.actionBar?.setDisplayHomeAsUpEnabled(false)
+//        setHasOptionsMenu(false)
     }
 
     /**
@@ -195,6 +216,11 @@ class ProductListFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         mListener = null
+    }
+
+    override fun onDestroy() {
+        binding = null
+        super.onDestroy()
     }
 
     /**

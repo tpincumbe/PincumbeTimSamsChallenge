@@ -1,16 +1,18 @@
 package com.walmart.labs
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.google.android.material.snackbar.Snackbar
+import com.walmart.labs.databinding.ActivityMainBinding
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.viewmodels.MainViewModel
 import com.walmart.labs.products.viewmodels.MainViewModelFactory
 import com.walmart.labs.products.views.ProductDetailPagerFragment
 import com.walmart.labs.products.views.ProductListFragment
-import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
 /**
@@ -20,12 +22,16 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteractionListener,
     ProductDetailPagerFragment.OnFragmentInteractionListener {
 
+    private val binding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
     private val isTwoPane: Boolean by lazy {
-        frag_product_details != null
+        binding.fragProductDetails != null
     }
 
     /**
@@ -41,12 +47,12 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
      * The viewmodel that represents the main activity.
      */
     private val viewModel: MainViewModel by lazy {
-        ViewModelProviders.of(this, factory).get(MainViewModel::class.java)
+        ViewModelProvider(this@MainActivity, factory).get(MainViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
         /*
          * If we are in a tablet view then load both fragments. Otherwise the navigation controller takes control
@@ -139,5 +145,20 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
      */
     override fun onPageSelected(position: Int) {
         viewModel.fragProductList.updateSelectedProduct(position)
+    }
+
+    inner class PaneListener : SlidingPaneLayout.PanelSlideListener {
+        override fun onPanelSlide(panel: View, slideOffset: Float) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onPanelOpened(panel: View) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onPanelClosed(panel: View) {
+            TODO("Not yet implemented")
+        }
+
     }
 }

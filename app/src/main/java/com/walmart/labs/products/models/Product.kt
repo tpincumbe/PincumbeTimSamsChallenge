@@ -1,7 +1,7 @@
 package com.walmart.labs.products.models
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * The data model that represents a Walmart Product and it's properties

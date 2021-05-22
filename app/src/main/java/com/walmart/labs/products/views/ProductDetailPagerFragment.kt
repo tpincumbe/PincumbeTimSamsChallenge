@@ -8,13 +8,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.walmart.labs.MainActivity
-import com.walmart.labs.R
+import com.walmart.labs.databinding.FragmentProductDetailPagerBinding
 import com.walmart.labs.products.models.Product
 import com.walmart.labs.products.util.ProductDetailPagerAdapter
-import kotlinx.android.synthetic.main.fragment_product_detail_pager.*
 import java.util.*
 
 const val SELECTED_PROD_TAG = "selectedProductTag"
@@ -25,6 +23,8 @@ const val PRODUCT_LIST_TAG = "productListTag"
  * The view pager is used to swipe between products easily.
  */
 class ProductDetailPagerFragment : Fragment() {
+
+    private var binding: FragmentProductDetailPagerBinding? = null
 
     companion object {
         /**
@@ -70,20 +70,12 @@ class ProductDetailPagerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_product_detail_pager, container, false)
+        binding = FragmentProductDetailPagerBinding.inflate(layoutInflater, container, false)
+        return binding?.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        activity?.title = "Product Details"
-
-        /**
-         * Add the back button to the actio bar
-         */
-        (activity as MainActivity).apply {
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            setHasOptionsMenu(true)
-        }
 
         /**
          * Get the data passed into the fragment
@@ -105,6 +97,19 @@ class ProductDetailPagerFragment : Fragment() {
 
             updateSelectedItem(position, productsList)
         }
+
+        /**
+         * Add the back button to the action bar
+         */
+        (activity as MainActivity?)?.apply {
+            if (isTwoPane) {
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            } else {
+                title = "Product Details"
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                setHasOptionsMenu(true)
+            }
+        }
     }
 
     /**
@@ -118,30 +123,40 @@ class ProductDetailPagerFragment : Fragment() {
         arguments?.putParcelableArrayList(PRODUCT_LIST_TAG, productsList as ArrayList)
 
         // Create and set the pager adapter properties
-        pagerProductDetail.apply {
+        binding?.pagerProductDetail?.apply {
             adapter = ProductDetailPagerAdapter(
                 productsList,
-                (activity as MainActivity).supportFragmentManager
+                (activity as MainActivity).supportFragmentManager,
+                lifecycle
             )
             currentItem = position
             if (isTwoPane) { // If in tablet view add a scroll listener to highlight the selected product in the list
-                addOnPageChangeListener(object : OnPageChangeListener {
-                    override fun onPageScrollStateChanged(state: Int) {}
-
-                    override fun onPageScrolled(
-                        position: Int,
-                        positionOffset: Float,
-                        positionOffsetPixels: Int
-                    ) {
-                    }
-
-                    override fun onPageSelected(position: Int) {
-                        arguments?.putInt(SELECTED_PROD_TAG, position)
-                        mListener?.onPageSelected(position)
-                    }
-
-                })
+                registerOnPageChangeCallback(onPageChangeCallback)
+//                addOnPageChangeListener(object : OnPageChangeListener {
+//                    override fun onPageScrollStateChanged(state: Int) {}
+//
+//                    override fun onPageScrolled(
+//                        position: Int,
+//                        positionOffset: Float,
+//                        positionOffsetPixels: Int
+//                    ) {
+//                    }
+//
+//                    override fun onPageSelected(position: Int) {
+//                        arguments?.putInt(SELECTED_PROD_TAG, position)
+//                        mListener?.onPageSelected(position)
+//                    }
+//
+//                })
             }
+        }
+    }
+
+    private val onPageChangeCallback = object: OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            arguments?.putInt(SELECTED_PROD_TAG, position)
+            mListener?.onPageSelected(position)
         }
     }
 
@@ -160,6 +175,12 @@ class ProductDetailPagerFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         mListener = null
+    }
+
+    override fun onDestroy() {
+        binding?.pagerProductDetail?.unregisterOnPageChangeCallback(onPageChangeCallback)
+        binding = null
+        super.onDestroy()
     }
 
     /**
