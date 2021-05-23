@@ -6,6 +6,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/background_light"
         tools:context=".products.views.ProductDetailFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -67,8 +68,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:contentDescription="@string/cd_product_image"
-                android:minHeight="150dp"
                 android:minWidth="150dp"
+                android:minHeight="150dp"
                 app:layout_constrainedHeight="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_max="400dp"
@@ -93,6 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
