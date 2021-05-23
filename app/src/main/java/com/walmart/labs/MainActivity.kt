@@ -5,6 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.google.android.material.snackbar.Snackbar
 import com.walmart.labs.databinding.ActivityMainBinding
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
+     * device. Checks if the layout file contains the frag product details frame layout.
      */
     private val isTwoPane: Boolean by lazy {
         binding.fragProductDetails != null
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
 
     /**
      * TABLET VIEW ONLY
-     * The factory to create the view model tha tis used for the Tablet view
+     * The factory to create the view model that is used for the Tablet view
      */
     private val factory: MainViewModelFactory by lazy {
         MainViewModelFactory(isTwoPane)
@@ -127,15 +128,6 @@ class MainActivity : AppCompatActivity(), ProductListFragment.OnFragmentInteract
                 .replace(R.id.frag_product_details, it)
                 .commit()
         }
-    }
-
-    /**
-     * PHONE VIEW ONLY
-     * This will use the fragment manager to pop the back stack and go back to the product list page
-     */
-    override fun goBack() {
-        supportFragmentManager.popBackStack()
-        viewModel.fragProductDetail = null
     }
 
     /**

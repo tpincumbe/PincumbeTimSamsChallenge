@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.walmart.labs.MainActivity
 import com.walmart.labs.databinding.FragmentProductDetailPagerBinding
@@ -132,22 +133,6 @@ class ProductDetailPagerFragment : Fragment() {
             currentItem = position
             if (isTwoPane) { // If in tablet view add a scroll listener to highlight the selected product in the list
                 registerOnPageChangeCallback(onPageChangeCallback)
-//                addOnPageChangeListener(object : OnPageChangeListener {
-//                    override fun onPageScrollStateChanged(state: Int) {}
-//
-//                    override fun onPageScrolled(
-//                        position: Int,
-//                        positionOffset: Float,
-//                        positionOffsetPixels: Int
-//                    ) {
-//                    }
-//
-//                    override fun onPageSelected(position: Int) {
-//                        arguments?.putInt(SELECTED_PROD_TAG, position)
-//                        mListener?.onPageSelected(position)
-//                    }
-//
-//                })
             }
         }
     }
@@ -165,7 +150,7 @@ class ProductDetailPagerFragment : Fragment() {
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == android.R.id.home) {
-            mListener?.goBack()
+            findNavController().navigateUp()
             true
         } else {
             super.onOptionsItemSelected(item)
@@ -173,12 +158,13 @@ class ProductDetailPagerFragment : Fragment() {
     }
 
     override fun onDetach() {
-        super.onDetach()
         mListener = null
+        super.onDetach()
     }
 
     override fun onDestroy() {
         binding?.pagerProductDetail?.unregisterOnPageChangeCallback(onPageChangeCallback)
+        (activity as MainActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         binding = null
         super.onDestroy()
     }
@@ -187,8 +173,6 @@ class ProductDetailPagerFragment : Fragment() {
      * Interface used to provide interaction between the activity and fragment
      */
     interface OnFragmentInteractionListener {
-        fun goBack()
-
         fun onPageSelected(position: Int)
     }
 }
