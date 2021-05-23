@@ -1,13 +1,10 @@
 package com.walmart.labs.networking
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.walmart.labs.products.models.Product
 import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import timber.log.Timber
@@ -18,9 +15,9 @@ const val DEFAULT_PAGE_SIZE = "30"
 /**
  * The Moshi object that Retrofit will be using for JSON Conversion in Kotlin
  */
-private val moshi = Moshi.Builder()
-    .add(KotlinJsonAdapterFactory())
-    .build()
+//private val moshi = Moshi.Builder()
+//    .add(KotlinJsonAdapterFactory())
+//    .build()
 
 /**
  * The retrofit object to make network request using Moshi as a JSON converter.
@@ -43,7 +40,7 @@ interface ProductsApiService {
  * A public Api object that exposes the lazy-initialized Products Retrofit service
  */
 object ProductsApi {
-    val retrofitService: ProductsApiService by lazy { retrofit.create(ProductsApiService::class.java) }
+    private val retrofitService: ProductsApiService by lazy { retrofit.create(ProductsApiService::class.java) }
 
     suspend fun fetchProducts(productPage: Int): ProductsResponse {
         val deferredProducts = retrofitService.getProductsAsync(productPage)

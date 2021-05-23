@@ -80,13 +80,6 @@ class ProductListFragment : Fragment() {
                             )
                     )
                 }
-//                findNavController().navigate(
-//                    ProductListFragmentDirections
-//                        .actionProductListFragmentToProductDetailPagerFragment(
-//                            viewModel.productList.value?.toTypedArray()!!,
-//                            position
-//                        )
-//                )
             }
         }
     }
@@ -123,7 +116,7 @@ class ProductListFragment : Fragment() {
             adapter = productListAdapter
             val manager = LinearLayoutManager(activity)
             layoutManager = manager
-            context?.let { addItemDecoration(DividerItemDecoration(context, manager.orientation)) }
+            context?.let { c -> addItemDecoration(DividerItemDecoration(c, manager.orientation)) }
             // Add scroll listener to fetch additional data when we've reached the bottom of hte list
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -178,12 +171,6 @@ class ProductListFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-//        activity?.actionBar?.setDisplayHomeAsUpEnabled(false)
-//        setHasOptionsMenu(false)
     }
 
     /**

@@ -1,14 +1,8 @@
 package com.walmart.labs.products.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.walmart.labs.networking.ProductsApi
 import com.walmart.labs.products.models.Product
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -57,8 +51,8 @@ class ProductListViewModel(private val isTwoPane: Boolean) : ViewModel() {
     /*
      * Coroutine job & scope
      */
-    private var productJob = Job()
-    private var productScope = CoroutineScope(productJob + Dispatchers.IO)
+//    private var productJob = Job()
+//    private var productScope = CoroutineScope(productJob + Dispatchers.IO)
 
     /**
      * The current page of data from the server
@@ -85,11 +79,12 @@ class ProductListViewModel(private val isTwoPane: Boolean) : ViewModel() {
      * @param clearList - if we are refreshing the data this will clear the list of products
      */
     private fun fetchProducts(clearList: Boolean) {
-        if (productJob.isCancelled) {
-            productJob = Job()
-            productScope = CoroutineScope(productJob + Dispatchers.IO)
-        }
-        productScope.launch {
+//        if (productJob.isCancelled) {
+//            productJob = Job()
+//            productScope = CoroutineScope(productJob + Dispatchers.IO)
+//        }
+
+        viewModelScope.launch {
             try {
                 val productsResponse = ProductsApi.fetchProducts(productPage)
                 Timber.d("got products response $productsResponse")
@@ -142,6 +137,6 @@ class ProductListViewModel(private val isTwoPane: Boolean) : ViewModel() {
      */
     override fun onCleared() {
         super.onCleared()
-        productJob.cancel()
+//        productJob.cancel()
     }
 }
